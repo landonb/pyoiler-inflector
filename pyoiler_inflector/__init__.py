@@ -1,5 +1,5 @@
-# Last Modified: 2016.11.19 /coding: utf-8
-# Copyright: © 2014-2016 Landon Bouma.
+# Last Modified: 2017.08.02 /coding: utf-8
+# Copyright: © 2014-2017 Landon Bouma.
 # License: GPLv3. See LICENSE.txt.
 #  vim:tw=0:ts=4:sw=4:et
 
@@ -16,7 +16,6 @@
 import re
 
 class Inflector(object):
-
     def __init__(self):
         assert(False) # Not instantiable.
 
@@ -98,6 +97,12 @@ class Inflector(object):
 
     @staticmethod
     def pluralize(singular='', conditional=False):
+        # 2017-08-02: Should we handle abbreviations, or the caller?
+        # E.g., if they send "sec.", as in, "seconds", do we handle
+        # that? Seems easy enough, but is it morally our concern?
+        untouched = singular
+        singular = singular.rstrip('.')
+        postfix = '.' * (len(untouched) - len(singular))
 
         try:
             is_uncountable = Inflector.uncountable.index(singular)
@@ -112,11 +117,10 @@ class Inflector(object):
                     pluralized = candidate
                     # Don't break; use last substitute result.
 
-        return pluralized
+        return pluralized + postfix
 
     @staticmethod
     def singularize(plural=''):
-
         singularized = plural
         try:
             is_uncountable = Inflector.uncountable.index(plural)
